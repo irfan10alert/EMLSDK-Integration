@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/Pods-EML-Integration/Pods-EML-Integration-frameworks.sh
+${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework
+${PODS_XCFRAMEWORKS_BUILD_DIR}/EMLSDK/EMLiOSSDK.framework/EMLiOSSDK

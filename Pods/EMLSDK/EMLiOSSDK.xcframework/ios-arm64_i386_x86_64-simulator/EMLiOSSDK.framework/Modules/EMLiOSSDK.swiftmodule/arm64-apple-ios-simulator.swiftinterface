@@ -1,0 +1,1288 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.4.2 (swiftlang-1205.0.28.2 clang-1205.0.19.57)
+// swift-module-flags: -target arm64-apple-ios10.3-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name EMLiOSSDK
+import CommonCrypto
+import CryptoSwift
+@_exported import EMLiOSSDK
+import Foundation
+import PassKit
+import Security
+import Swift
+import UIKit
+import WebKit
+@objc(EMLAccountStatus) public enum EMLAccountStatus : Swift.Int, Swift.Decodable {
+  case preActive = 1
+  case active = 2
+  case inactive = 3
+  case expired = 4
+  case closed = 5
+  case emlInactive = 11
+  case inactivePinTriesExceeded = 20
+  case lostStolen = 31
+  case suspectedFraud = 32
+  case deactivated = 41
+  case replaced = 42
+  case locked = 43
+  case unknown = 0
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLLinkEntity) public protocol EMLLinkEntity {
+  @objc func getLabel() -> Swift.String
+  @objc func getDestination() -> Swift.String
+  @objc func getType() -> Swift.String
+}
+@_hasMissingDesignatedInitializers @objc(EMLAgreement) public class EMLAgreement : ObjectiveC.NSObject {
+  final public let link: Foundation.URL
+  final public let mandatory: Swift.Bool
+  final public let title: Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLOffer) public class EMLOffer : ObjectiveC.NSObject, Foundation.NSCoding, Swift.Decodable {
+  @objc final public let offerId: Swift.String
+  @objc final public let companyId: Swift.String
+  @objc final public let mdesConfigId: Swift.String?
+  @objc final public let processor: EMLiOSSDK.EMLProcessor
+  @objc final public let value: EMLiOSSDK.Currency
+  @objc final public let exp: Foundation.Date?
+  @objc public init(offerId: Swift.String, companyId: Swift.String, mdesConfigId: Swift.String?, processor: EMLiOSSDK.EMLProcessor = .au, value: EMLiOSSDK.Currency, exp: Foundation.Date?)
+  @objc public func encode(with coder: Foundation.NSCoder)
+  @objc required public init?(coder: Foundation.NSCoder)
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+open class KeychainWrapper {
+  @available(*, deprecated, message: "KeychainWrapper.defaultKeychainWrapper is deprecated, use KeychainWrapper.standard instead")
+  public static let defaultKeychainWrapper: EMLiOSSDK.KeychainWrapper
+  public static let standard: EMLiOSSDK.KeychainWrapper
+  public var serviceName: Swift.String {
+    get
+  }
+  public var accessGroup: Swift.String? {
+    get
+  }
+  public init(serviceName: Swift.String, accessGroup: Swift.String? = nil)
+  open func hasValue(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  open func accessibilityOfKey(_ key: Swift.String) -> EMLiOSSDK.KeychainItemAccessibility?
+  open func integer(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Int?
+  open func float(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Float?
+  open func double(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Double?
+  open func bool(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool?
+  open func string(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.String?
+  open func object(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Foundation.NSCoding?
+  open func data(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Foundation.Data?
+  open func dataRef(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Foundation.Data?
+  @discardableResult
+  open func set(_ value: Swift.Int, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Swift.Float, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Swift.Double, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Swift.Bool, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Swift.String, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Foundation.NSCoding, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func set(_ value: Foundation.Data, forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @available(*, deprecated, message: "remove is deprecated, use removeObject instead")
+  @discardableResult
+  open func remove(key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  @discardableResult
+  open func removeObject(forKey key: Swift.String, withAccessibility accessibility: EMLiOSSDK.KeychainItemAccessibility? = nil) -> Swift.Bool
+  open func removeAllKeys() -> Swift.Bool
+  open class func wipeKeychain()
+  @objc deinit
+}
+public enum EMLListTransactions {
+  public enum FetchTransactionHistory {
+    public class DateRequest {
+      public var startDate: Foundation.Date
+      public var endDate: Foundation.Date
+      public var card: EMLiOSSDK.EMLCardModel
+      public init(startDate: Foundation.Date, endDate: Foundation.Date, card: EMLiOSSDK.EMLCardModel)
+      @objc deinit
+    }
+    public class PagedRequest {
+      public var limit: Swift.Int
+      public var card: EMLiOSSDK.EMLCardModel
+      public init(limit: Swift.Int, card: EMLiOSSDK.EMLCardModel)
+      @objc deinit
+    }
+    public class Response {
+      public var transactions: EMLiOSSDK.EMLListTransactions.StoredTransactionsType
+      public var totalCount: Swift.Int?
+      public var resultsCount: Swift.Int?
+      public init(transactions: EMLiOSSDK.EMLListTransactions.StoredTransactionsType, totalCount: Swift.Int?, resultsCount: Swift.Int?)
+      @objc deinit
+    }
+    public class ViewModel {
+      public class DisplayedTransaction {
+        public var title: Swift.String
+        public var formattedDate: Swift.String
+        public var amount: Swift.String
+        public var transactionTypeId: Swift.String?
+        public var date: Foundation.Date
+        public var mccCode: Swift.Int?
+        public var category: Swift.String
+        public init(title: Swift.String, formattedDate: Swift.String, amount: Swift.String, transactionTypeId: Swift.String?, date: Foundation.Date, mccCode: Swift.Int?, category: Swift.String)
+        @objc deinit
+      }
+      public var displayedTransactions: EMLiOSSDK.EMLListTransactions.DisplayedTransactionsType
+      public var totalCount: Swift.Int?
+      public var resultsCount: Swift.Int?
+      public init(displayedTransactions: EMLiOSSDK.EMLListTransactions.DisplayedTransactionsType, totalCount: Swift.Int?, resultsCount: Swift.Int?)
+      @objc deinit
+    }
+  }
+  public typealias StoredTransactionsType = [(key: Swift.String, array: [EMLiOSSDK.EMLTransactionModel])]
+  public typealias DisplayedTransactionsType = [(key: Swift.String, array: [EMLiOSSDK.EMLListTransactions.FetchTransactionHistory.ViewModel.DisplayedTransaction])]
+}
+public enum EMLListTransactionsState : Swift.Int {
+  case preActive
+  case active
+  case inactive
+  case expired
+  case closedCancelled
+  case inactive11
+  case pinTriesExceeded
+  case lostStolen
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum EMLTransactionCategories : Swift.String {
+  case utilities
+  case entertainment
+  case home
+  case travel
+  case transport
+  case health
+  case shopping
+  case moneyTransfers
+  case groceries
+  case eatingOut
+  case education
+  case donations
+  case uncategorised
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_inheritsConvenienceInitializers @objc(FetchTermsRequest) public class FetchTermsRequest : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(FetchTermsResponse) public class FetchTermsResponse : ObjectiveC.NSObject {
+  final public let terms: [EMLiOSSDK.EMLTextModel]?
+  final public let version: Swift.Int?
+  final public let errorMessage: Swift.String?
+  public init(terms: [EMLiOSSDK.EMLTextModel]?, version: Swift.Int?, errorMessage: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc public class FetchTermsViewModel : ObjectiveC.NSObject {
+  final public let terms: [EMLiOSSDK.EMLTextModel]?
+  final public let termsVersion: Swift.Int?
+  final public let errorMessage: Swift.String?
+  public init(terms: [EMLiOSSDK.EMLTextModel]?, termsVersion: Swift.Int?, errorMessage: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(AcceptEMLTermsRequest) public class AcceptEMLTermsRequest : ObjectiveC.NSObject {
+  @objc final public let version: Swift.Int
+  @objc public init(version: Swift.Int)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(AcceptTermsResponse) public class AcceptTermsResponse : ObjectiveC.NSObject {
+  @objc final public let success: Swift.Bool
+  @objc final public let error: Swift.Error?
+  @objc public init(success: Swift.Bool, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(CheckEMLTermsAcceptedRequest) public class CheckEMLTermsAcceptedRequest : ObjectiveC.NSObject {
+  @objc final public let version: Swift.Int
+  @objc public init(version: Swift.Int)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(CheckEMLTermsAcceptedResponse) public class CheckEMLTermsAcceptedResponse : ObjectiveC.NSObject {
+  @objc final public let accepted: Swift.Bool
+  @objc final public let error: Swift.Error?
+  @objc public init(accepted: Swift.Bool, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLCardModel) public class EMLCardModel : ObjectiveC.NSObject, Foundation.NSCoding, Swift.Decodable {
+  @objc public var externalAccountId: Swift.String
+  @objc public var companyId: Swift.String
+  @objc public var mdesConfigId: Swift.String?
+  @objc public var processor: EMLiOSSDK.EMLProcessor
+  @objc public init(externalAccountId: Swift.String, companyId: Swift.String, mdesConfigId: Swift.String?, processor: EMLiOSSDK.EMLProcessor = .au)
+  @objc public func toDictionary() -> [Swift.String : Swift.String]
+  required public init(from decoder: Swift.Decoder) throws
+  @objc required convenience public init(coder aDecoder: Foundation.NSCoder)
+  @objc public func encode(with aCoder: Foundation.NSCoder)
+  @objc override dynamic public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public var hash: Swift.Int {
+    @objc get
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(Currency) public class Currency : ObjectiveC.NSObject, Swift.Decodable, Foundation.NSCoding {
+  final public let amount: Swift.Double?
+  @objc final public let currencyCode: Swift.String?
+  @objc public var amountObjc: Foundation.NSNumber? {
+    @objc get
+  }
+  public init(amount: Swift.Double?, currencyCode: Swift.String?)
+  @objc public func encode(with coder: Foundation.NSCoder)
+  @objc required public init?(coder: Foundation.NSCoder)
+  @objc override dynamic public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLCardNotPresentDetails) public class EMLCardNotPresentDetails : ObjectiveC.NSObject {
+  @objc public var cardNumber: Swift.String
+  @objc public var expiry: Swift.String
+  @objc public var cvv: Swift.String
+  @objc public var eaid: Swift.String?
+  @objc public init(cardNumber: Swift.String, expiry: Swift.String, cvv: Swift.String, eaid: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLShowCardNotPresentDetailsRequest) public class EMLShowCardNotPresentDetailsRequest : ObjectiveC.NSObject {
+  @objc public init(card: EMLiOSSDK.EMLCardModel, displayOptions: EMLiOSSDK.EMLCardDisplayEntity)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLCardDisplayEntity) public class EMLCardDisplayEntity : ObjectiveC.NSObject {
+  @objc public init(cardImage: UIKit.UIImage? = nil, cardImageURL: Foundation.URL? = nil, accentColor: UIKit.UIColor, cardForegroundTextColor: UIKit.UIColor)
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension Data {
+  public func hexEncodedString() -> Swift.String
+}
+@objc(EMLAccountStatusEntity) public protocol EMLAccountStatusEntity {
+  @objc func getBalance() -> EMLiOSSDK.Currency
+  @objc func getStatus() -> EMLiOSSDK.EMLAccountStatus
+  @objc func getExternalAccountId() -> Swift.String
+  @objc func getCardNumber() -> Swift.String
+  @objc func getPlasticExpirationDate() -> Swift.String
+  @objc func getIsPlasticEnabled() -> Swift.Bool
+  @objc func getMDESConfigId() -> Swift.String
+}
+@objc(EMLPassportModel) public class EMLPassportModel : ObjectiveC.NSObject, Swift.Decodable {
+  @objc public var number: Swift.String?
+  @objc public var issuingCountry: Swift.String?
+  @objc public var expiry: Foundation.Date?
+  @objc public init(dictionary: [Swift.String : Swift.AnyObject])
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLAccountDetailsEntity) public protocol EMLAccountDetailsEntity {
+  @objc func getAccount() -> EMLiOSSDK.EMLAccountEntity
+}
+@objc(EMLAccountUpdate) public class EMLAccountUpdate : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let firstName: Swift.String?
+  @objc final public let lastName: Swift.String?
+  @objc final public let email: Swift.String?
+  @objc final public let mobile: Swift.String?
+  @objc final public let dob: Swift.String?
+  @objc final public let address1: Swift.String?
+  @objc final public let address2: Swift.String?
+  @objc final public let city: Swift.String?
+  @objc final public let state: Swift.String?
+  @objc final public let postcode: Swift.String?
+  @objc final public let country: Swift.String?
+  @objc public init(firstName: Swift.String?, lastName: Swift.String?, email: Swift.String?, mobile: Swift.String?, dob: Swift.String?, address1: Swift.String?, address2: Swift.String?, city: Swift.String?, state: Swift.String?, postcode: Swift.String?, country: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public enum EMLSettings {
+  public enum LaunchViewForChangePin {
+    public class Request {
+      public init()
+      @objc deinit
+    }
+    public class Response {
+      final public let success: Swift.Bool
+      final public let error: Swift.Error?
+      public init(success: Swift.Bool, error: Swift.Error?)
+      @objc deinit
+    }
+    public class ViewModel {
+      final public let response: EMLiOSSDK.EMLSettings.LaunchViewForChangePin.Response
+      public init(response: EMLiOSSDK.EMLSettings.LaunchViewForChangePin.Response)
+      @objc deinit
+    }
+  }
+  public enum GetIsGiftCard {
+    public class Response {
+      public var isGiftCard: Swift.Bool
+      public init(isGiftCard: Swift.Bool)
+      @objc deinit
+    }
+    public class ViewModel {
+      public var isGiftCard: Swift.Bool
+      public init(isGiftCard: Swift.Bool)
+      @objc deinit
+    }
+  }
+}
+@objc(ManagePinDisplayRequest) public class ManagePinDisplayRequest : ObjectiveC.NSObject {
+  @objc public init(card: EMLiOSSDK.EMLCardModel, displayOptions: EMLiOSSDK.EMLDisplayModel)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinUpdateRequest) public class ManagePinUpdateRequest : ObjectiveC.NSObject {
+  @objc public init(deviceId: Swift.String, eaid: Swift.String, cid: Swift.String, processor: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinUpdateResponse) public class ManagePinUpdateResponse : ObjectiveC.NSObject {
+  @objc public init(phoneNumber: Swift.String, emailAddress: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinInitiateRequest) public class ManagePinInitiateRequest : ObjectiveC.NSObject {
+  @objc public init(deviceId: Swift.String, eaid: Swift.String, cid: Swift.String, processor: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinInitiateResponse) public class ManagePinInitiateResponse : ObjectiveC.NSObject {
+  @objc public init(operationId: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinValidateRequest) public class ManagePinValidateRequest : ObjectiveC.NSObject {
+  @objc public init(otpString: Swift.String, operationId: Swift.String, deviceId: Swift.String, eaid: Swift.String, cid: Swift.String, processor: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ManagePinExecuteRequest) public class ManagePinExecuteRequest : ObjectiveC.NSObject {
+  @objc public init(otpString: Swift.String, operationId: Swift.String, pin: Swift.String, deviceId: Swift.String, eaid: Swift.String, cid: Swift.String, processor: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLManagePinDataModel) public class EMLManagePinDataModel : ObjectiveC.NSObject {
+  @objc final public let otpString: Swift.String?
+  @objc final public let operationId: Swift.String?
+  @objc final public let deviceId: Swift.String?
+  @objc final public let eaid: Swift.String?
+  @objc final public let cid: Swift.String?
+  @objc final public let pin: Swift.String?
+  @objc final public let commMethod: Swift.String
+  @objc final public let processor: Swift.String?
+  @objc public init(deviceId: Swift.String, eaid: Swift.String, cid: Swift.String, processor: Swift.String, otpString: Swift.String = "", operationId: Swift.String = "", pin: Swift.String = "")
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLRedeemGiftCardRequest) public class EMLRedeemGiftCardRequest : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let phoneNumber: Swift.String
+  @objc final public let activationCode: Swift.String
+  @objc final public let password: Swift.String?
+  @objc public init(phoneNumber: Swift.String, activationCode: Swift.String, password: Swift.String? = nil)
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(EMLRedeemGiftCardResponse) public class EMLRedeemGiftCardResponse : ObjectiveC.NSObject {
+  @objc final public let passwordRequired: Swift.Bool
+  @objc final public let accessToken: Swift.String?
+  @objc final public let cards: [EMLiOSSDK.EMLCardModel]?
+  @objc final public let current: EMLiOSSDK.EMLCardModel?
+  @objc final public let currentId: Swift.String?
+  @objc final public let offers: [EMLiOSSDK.EMLOffer]
+  @objc final public let additionalInformationRequired: Swift.Bool
+  @objc final public let termsConfirmed: Swift.Bool
+  @objc public init(passwordRequired: Swift.Bool, accessToken: Swift.String?, cards: [EMLiOSSDK.EMLCardModel]?, current: EMLiOSSDK.EMLCardModel?, currentId: Swift.String?, offers: [EMLiOSSDK.EMLOffer], additionalInformationRequired: Swift.Bool, termsConfirmed: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLRedeemGiftCardViewModel) public class EMLRedeemGiftCardViewModel : ObjectiveC.NSObject {
+  @objc final public let passwordRequired: Swift.Bool
+  @objc final public let error: Swift.Error?
+  @objc final public let currentCard: EMLiOSSDK.EMLCardModel?
+  @objc public init(passwordRequired: Swift.Bool, currentCard: EMLiOSSDK.EMLCardModel?, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLStateEntity) public protocol EMLStateEntity {
+  @objc func getCode() -> Swift.Int
+  @objc func getDesc() -> Swift.String
+  @objc func isActive() -> Swift.Bool
+  @objc func getLegacyCode() -> Swift.String
+}
+@objc(EMLErrorModel) public class EMLErrorModel : ObjectiveC.NSObject, Swift.Decodable {
+  final public let code: Swift.String
+  final public let desc: Swift.String
+  final public let extraInfo: Swift.String
+  public init(dictionary: [Swift.String : Swift.AnyObject])
+  required public init(from decoder: Swift.Decoder) throws
+  @objc public func getCode() -> Swift.String
+  @objc public func getDesc() -> Swift.String
+  @objc public func getExtraInfo() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAdditionalUserInfo) public class EMLAdditionalUserInfo : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let firstName: Swift.String?
+  @objc final public let lastName: Swift.String?
+  @objc final public let email: Swift.String?
+  @objc final public let address1: Swift.String?
+  @objc final public let address2: Swift.String?
+  @objc final public let city: Swift.String?
+  @objc final public let state: Swift.String?
+  @objc final public let postcode: Swift.String?
+  @objc final public let country: Swift.String?
+  @objc public init(firstName: Swift.String?, lastName: Swift.String?, email: Swift.String?, address1: Swift.String?, address2: Swift.String?, city: Swift.String?, state: Swift.String?, postcode: Swift.String?, country: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(EMLTransactionEntity) public protocol EMLTransactionEntity {
+  @objc func getId() -> Swift.String?
+  @objc func getParentId() -> Swift.String?
+  @objc func getTypeId() -> Swift.String?
+  @objc func getTypeDescription() -> Swift.String?
+  @objc func getDate() -> Foundation.Date
+  @objc func getDesc() -> Swift.String
+  @objc func getBaseAmount() -> EMLiOSSDK.Currency
+  @objc func getRunningBalance() -> EMLiOSSDK.Currency?
+  @objc func getFeeTotal() -> EMLiOSSDK.Currency?
+  @objc func getMccCode() -> Swift.Int
+  @objc func getCategory() -> Swift.String
+}
+@objc(EMLAddressEntity) public protocol EMLAddressEntity {
+  @objc func getBuilding() -> Swift.String
+  @objc func getLine1() -> Swift.String
+  @objc func getLine2() -> Swift.String
+  @objc func getLine3() -> Swift.String
+  @objc func getSuburb() -> Swift.String
+  @objc func getCity() -> Swift.String
+  @objc func getPostCode() -> Swift.String
+  @objc func getState() -> Swift.String
+  @objc func getCountry() -> Swift.String
+}
+@objc(EMLConfigEntity) public protocol EMLConfigEntity {
+  @objc func getMinApiVersion() -> Swift.Int
+  @objc func getTermsVersion() -> Swift.Int
+  @objc func getTerms() -> [EMLiOSSDK.EMLTextEntity]?
+  @objc func getFaqs() -> [EMLiOSSDK.EMLTextEntity]
+  @objc func getSupportLinks() -> [EMLiOSSDK.EMLLinkEntity]
+  @objc func getSupportTitle() -> Swift.String
+  @objc func getPlayStoreUrl() -> Swift.String
+  @objc func getAppStoreUrl() -> Swift.String
+  @objc func getHideManagePin() -> Swift.Bool
+  @objc func getIsGiftCard() -> Swift.Bool
+  @objc func getCardArtBaseUrl() -> Swift.String?
+  @objc func getIsSmsEnabled() -> Swift.Bool
+  @objc func getShowCardDetailsButton() -> Swift.Bool
+  @objc func getIsPasswordless() -> Swift.Bool
+  @objc func getIsPlasticClaimable() -> Swift.Bool
+  @objc func getShowExtraTerms() -> Swift.Bool
+  @objc func getShowCardholderAgreement() -> Swift.Bool
+  @objc func getCardholderAgreements() -> [Swift.String : EMLiOSSDK.EMLAgreement]?
+  @objc func getExtraTerms() -> [Swift.String : [EMLiOSSDK.EMLAgreement]]?
+  @objc func getLeClients() -> [Swift.String]
+  @objc func getMeClients() -> [Swift.String]
+}
+@objc(EMLTransactionsRequestModel) public class EMLTransactionsRequestModel : ObjectiveC.NSObject {
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc final public let offset: Swift.Int
+  @objc final public let limit: Swift.Int
+  @objc final public let startDate: Foundation.Date?
+  @objc final public let endDate: Foundation.Date?
+  @objc final public let includeDiscount: Swift.Bool
+  @objc public init(card: EMLiOSSDK.EMLCardModel, offset: Swift.Int, limit: Swift.Int, startDate: Foundation.Date? = nil, endDate: Foundation.Date? = nil, includeDiscount: Swift.Bool = false)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLTransactionsResponseModel) public class EMLTransactionsResponseModel : ObjectiveC.NSObject {
+  final public let transactions: [EMLiOSSDK.EMLTransactionModel]
+  final public let resultsCount: Swift.Int
+  final public let totalCount: Swift.Int
+  final public let resultsOffset: Swift.Int
+  final public let externalAccountId: Swift.String
+  @objc public func getTransactions() -> [EMLiOSSDK.EMLTransactionEntity]
+  @objc public func getResultsCount() -> Swift.Int
+  @objc public func getTotalCount() -> Swift.Int
+  @objc public func getResultsOffset() -> Swift.Int
+  @objc public init(transactions: [EMLiOSSDK.EMLTransactionModel], resultsCount: Swift.Int, totalCount: Swift.Int, externalAccountId: Swift.String, resultsOffset: Swift.Int)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAddToWalletRequest) public class EMLAddToWalletRequest : ObjectiveC.NSObject {
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc final public let cardName: Swift.String
+  @objc public init(card: EMLiOSSDK.EMLCardModel, cardName: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLGetWalletStatusRequest) public class EMLGetWalletStatusRequest : ObjectiveC.NSObject {
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLWalletStatus) public enum EMLWalletStatus : Swift.Int {
+  case unavailable
+  case available
+  case cancelled
+  case added
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLTextEntity) public protocol EMLTextEntity {
+  @objc func getTitle() -> Swift.String
+  @objc func getDesc() -> Swift.String
+}
+@objc(EMLDeactivateCardRequest) public class EMLDeactivateCardRequest : ObjectiveC.NSObject {
+  @objc final public let reasonCode: EMLiOSSDK.EMLDeactivationReasonCode
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel, reasonCode: EMLiOSSDK.EMLDeactivationReasonCode)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLDeactivateCardResponse) public class EMLDeactivateCardResponse : ObjectiveC.NSObject {
+  @objc final public let success: Swift.Bool
+  @objc final public let error: Swift.Error?
+  @objc public init(success: Swift.Bool, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLDeactivationReasonCode) public enum EMLDeactivationReasonCode : Swift.Int {
+  case inactive = 3
+  case closedCancelled = 5
+  case lostStolen = 31
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(EmlApiException) public class EmlApiException : ObjectiveC.NSObject, Swift.Error {
+  final public let statusCode: Swift.Int
+  final public let errorCode: Swift.String?
+  final public let message: Swift.String?
+  @objc public init(statusCode: Swift.Int, model: EMLiOSSDK.EMLErrorModel)
+  @objc public init(statusCode: Swift.Int, message: Swift.String)
+  @objc public func getStatusCode() -> Swift.Int
+  @objc public func getErrorCode() -> Swift.String?
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension EmlApiException : Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+@objc(EMLAccountModel) public class EMLAccountModel : ObjectiveC.NSObject, EMLiOSSDK.EMLAccountEntity, Swift.Decodable {
+  @objc public init(dictionary: [Swift.String : Swift.AnyObject])
+  @objc public func getCardNumber() -> Swift.String
+  @objc public func getExternalAccountId() -> Swift.String
+  @objc public func getPlasticExpirationDate() -> Swift.String
+  @objc public func isCompliant() -> Swift.Bool
+  @objc public func getNameOnCard() -> Swift.String?
+  @objc public func getDisplayName() -> Swift.String?
+  @objc public func getAccountExpirationDate() -> Swift.String
+  @objc public func getBalance() -> EMLiOSSDK.Currency
+  @objc public func getStatus() -> EMLiOSSDK.EMLAccountStatus
+  @objc public func getIsPlasticEnabled() -> Swift.Bool
+  @objc public func getMDESConfigId() -> Swift.String
+  @objc public func getFreeText() -> EMLiOSSDK.EMLFreeTextEntity?
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLAccountSummaryRequest) public class EMLAccountSummaryRequest : ObjectiveC.NSObject {
+  @objc public var card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAccountSummaryResponse) public class EMLAccountSummaryResponse : ObjectiveC.NSObject {
+  @objc public var status: EMLiOSSDK.EMLAccountStatusModel
+  @objc public var error: Swift.Error?
+  @objc public init(status: EMLiOSSDK.EMLAccountStatusModel, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAccountDetailsRequest) public class EMLAccountDetailsRequest : ObjectiveC.NSObject {
+  @objc public var withClient: Swift.Bool
+  @objc public var withFreeText: Swift.Bool
+  @objc public var card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel, withClient: Swift.Bool = true, withFreeText: Swift.Bool = true)
+  @objc override dynamic public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public var hash: Swift.Int {
+    @objc get
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAccountDetailsResponse) public class EMLAccountDetailsResponse : ObjectiveC.NSObject {
+  @objc public var details: EMLiOSSDK.EMLAccountDetailsModel
+  @objc public var error: Swift.Error?
+  @objc public init(details: EMLiOSSDK.EMLAccountDetailsModel, error: Swift.Error?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAccountCardTokenRequest) public class EMLAccountCardTokenRequest : ObjectiveC.NSObject {
+  @objc public var card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAccountCardTokenResponse) public class EMLAccountCardTokenResponse : ObjectiveC.NSObject {
+  @objc public var tokens: [EMLiOSSDK.EMLAccountTokensModel]?
+  @objc public init(tokens: [EMLiOSSDK.EMLAccountTokensModel])
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLPasswordResetRequest) public class EMLPasswordResetRequest : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let phoneNumber: Swift.String
+  @objc final public let verificationCode: Swift.String?
+  @objc final public let password: Swift.String?
+  @objc public init(phoneNumber: Swift.String, verificationCode: Swift.String? = nil, password: Swift.String? = nil)
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(EMLPasswordResetResponse) public class EMLPasswordResetResponse : ObjectiveC.NSObject {
+  @objc final public let codeRequired: Swift.Bool
+  @objc final public let passwordRequired: Swift.Bool
+  @objc final public let cards: [EMLiOSSDK.EMLCardModel]?
+  @objc final public let offers: [EMLiOSSDK.EMLOffer]?
+  @objc final public let termsConfirmed: Swift.Bool
+  @objc public init(codeRequired: Swift.Bool = false, passwordRequired: Swift.Bool = false, cards: [EMLiOSSDK.EMLCardModel]? = nil, offers: [EMLiOSSDK.EMLOffer]? = nil, termsConfirmed: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc public enum AddressDisplayType : Swift.Int, Swift.Encodable {
+  case readWrite
+  case read
+  case notDisplayed
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc public enum EMLPinAccess : Swift.Int, Swift.Encodable {
+  case notApplicable
+  case setPin
+  case showPin
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLAccountStatusModel) public class EMLAccountStatusModel : ObjectiveC.NSObject, EMLiOSSDK.EMLAccountStatusEntity {
+  final public let balance: EMLiOSSDK.Currency
+  final public let status: EMLiOSSDK.EMLAccountStatus
+  final public let externalAccountId: Swift.String
+  final public let cardNumber: Swift.String
+  final public let plasticExpirationDate: Swift.String
+  final public let isPlasticEnabled: Swift.Bool
+  final public let mdesConfigId: Swift.String
+  final public let addressDisplayType: EMLiOSSDK.AddressDisplayType
+  final public let addressRegistrationRequired: Swift.Bool
+  final public let pinEnabled: Swift.Bool
+  final public let pinMode: EMLiOSSDK.EMLPinAccess
+  @objc public init(balance: EMLiOSSDK.Currency, status: EMLiOSSDK.EMLAccountStatus, externalAccountId: Swift.String, cardNumber: Swift.String, plasticExpirationDate: Swift.String, isPlasticEnabled: Swift.Bool, mdesConfigId: Swift.String, addressDisplayType: EMLiOSSDK.AddressDisplayType, addressRegistrationRequired: Swift.Bool, pinEnabled: Swift.Bool, pinMode: EMLiOSSDK.EMLPinAccess)
+  @objc public func getBalance() -> EMLiOSSDK.Currency
+  @objc public func getStatus() -> EMLiOSSDK.EMLAccountStatus
+  @objc public func getExternalAccountId() -> Swift.String
+  @objc public func getCardNumber() -> Swift.String
+  @objc public func getPlasticExpirationDate() -> Swift.String
+  @objc public func getIsPlasticEnabled() -> Swift.Bool
+  @objc public func getMDESConfigId() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EmlPinException) public class EmlPinException : EMLiOSSDK.EmlApiException {
+  final public let cancelled: Swift.Bool
+  final public let unauthorized: Swift.Bool
+  final public let forceLogout: Swift.Bool
+  final public let offerRetry: Swift.Bool
+  @objc public init(statusCode: Swift.Int, model: EMLiOSSDK.EMLErrorModel, cancelled: Swift.Bool, unauthorized: Swift.Bool, forceLogout: Swift.Bool = false, offerRetry: Swift.Bool = false)
+  @objc public init(statusCode: Swift.Int, message: Swift.String, cancelled: Swift.Bool, unauthorized: Swift.Bool, forceLogout: Swift.Bool = false, offerRetry: Swift.Bool = false)
+  @objc public func getCancelled() -> Swift.Bool
+  @objc public func getUnauthorized() -> Swift.Bool
+  @objc public func getGorceLogout() -> Swift.Bool
+  @objc override public init(statusCode: Swift.Int, model: EMLiOSSDK.EMLErrorModel)
+  @objc override public init(statusCode: Swift.Int, message: Swift.String)
+  @objc deinit
+}
+@objc(EMLAccountTokensModel) public class EMLAccountTokensModel : ObjectiveC.NSObject, EMLiOSSDK.EMLAccountTokensEntity {
+  final public let panUniqueReference: Swift.String
+  final public let wallet: Swift.String
+  final public let status: EMLiOSSDK.EMLTokenStatus
+  @objc public init(dictionary: [Swift.String : Swift.AnyObject])
+  @objc public func getPanUniqueReference() -> Swift.String
+  @objc public func getWallet() -> Swift.String
+  @objc public func getStatus() -> EMLiOSSDK.EMLTokenStatus
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum KeychainItemAccessibility {
+  @available(iOS 4, *)
+  case afterFirstUnlock
+  @available(iOS 4, *)
+  case afterFirstUnlockThisDeviceOnly
+  @available(iOS 4, *)
+  case always
+  @available(iOS 8, *)
+  case whenPasscodeSetThisDeviceOnly
+  @available(iOS 4, *)
+  case alwaysThisDeviceOnly
+  @available(iOS 4, *)
+  case whenUnlocked
+  @available(iOS 4, *)
+  case whenUnlockedThisDeviceOnly
+  public static func == (a: EMLiOSSDK.KeychainItemAccessibility, b: EMLiOSSDK.KeychainItemAccessibility) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLStoreProtocol) public protocol EMLStoreProtocol {
+  @objc func setAuthenticationToken(token: Swift.String, username: Swift.String?, onComplete: @escaping () -> Swift.Void)
+  @objc func logout(onComplete: (() -> Swift.Void)?)
+  @objc func isLoggedIn() -> Swift.Bool
+  @objc func activate(request: EMLiOSSDK.EMLCardActivationRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func deactivate(request: EMLiOSSDK.EMLDeactivateCardRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func activatePlastic(request: EMLiOSSDK.EMLPlasticActivationRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func getTransactionHistory(request: EMLiOSSDK.EMLTransactionsRequestModel, onComplete: @escaping (EMLiOSSDK.EMLTransactionsResponseModel) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func showUpdatePin(request: EMLiOSSDK.ManagePinDisplayRequest, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func showPin(card: EMLiOSSDK.EMLCardModel, displayOptions: EMLiOSSDK.EMLCardDisplayEntity, presentingViewController: UIKit.UIViewController, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func getWalletStatus(request: EMLiOSSDK.EMLGetWalletStatusRequest, onComplete: @escaping (EMLiOSSDK.EMLWalletStatus) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func addCardToWallet(request: EMLiOSSDK.EMLAddToWalletRequest, onComplete: @escaping (EMLiOSSDK.EMLWalletStatus) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func getAccountSummary(request: EMLiOSSDK.EMLAccountSummaryRequest, onComplete: @escaping (EMLiOSSDK.EMLAccountStatusModel) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func getAccountDetails(request: EMLiOSSDK.EMLAccountDetailsRequest, onComplete: @escaping (EMLiOSSDK.EMLAccountDetailsModel) -> Swift.Void, onError: @escaping (Swift.Error, Swift.String) -> Swift.Void)
+  @objc func updateAccountDetails(card: EMLiOSSDK.EMLCardModel, accountUpdateDetails: EMLiOSSDK.EMLAccountUpdate, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func showCardNotPresentDetails(request: EMLiOSSDK.EMLShowCardNotPresentDetailsRequest)
+  @objc func getCurrentUsername() -> Swift.String?
+  @objc func getCurrentCards() -> [EMLiOSSDK.EMLCardModel]
+  @objc func getCurrentOffers() -> [EMLiOSSDK.EMLOffer]
+  @objc func login(request: EMLiOSSDK.EMLLoginRequest, onComplete: @escaping (EMLiOSSDK.EMLLoginResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func redeemGiftCard(request: EMLiOSSDK.EMLRedeemGiftCardRequest, onComplete: @escaping (EMLiOSSDK.EMLRedeemGiftCardResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func checkClaim(request: EMLiOSSDK.EMLRedeemGiftCardRequest, onComplete: @escaping (EMLiOSSDK.EMLOffer) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func addPlastic(phone: Swift.String, searchParam: Swift.String, securityCode: Swift.String?, processor: EMLiOSSDK.EMLProcessor, password: Swift.String?, additionalUserInfo: EMLiOSSDK.EMLAdditionalUserInfo?, onComplete: @escaping (EMLiOSSDK.EMLRedeemGiftCardResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func redeemOffer(id: Swift.String, onComplete: @escaping (EMLiOSSDK.EMLCurrentLogin) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func resetPassword(request: EMLiOSSDK.EMLPasswordResetRequest, onComplete: @escaping (EMLiOSSDK.EMLPasswordResetResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func isUpdateRequired(onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func getConfig(onComplete: @escaping (EMLiOSSDK.EMLConfigEntity) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func acceptTerms(onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func acceptExtraTerms(onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc func isNewTerms(onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+}
+public enum EMLNetworkError : Swift.String, Swift.Error {
+  case nullSubscriptionKey
+  case invalidSubscriptionKey
+  case invalidJWT
+  case noInternetConnection
+  case unknownError
+  public var message: Swift.String? {
+    get
+  }
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class EMLErrorHandler {
+  public static func parseError(statusCode: Swift.Int, data: Foundation.Data?) -> EMLiOSSDK.EmlApiException?
+  public func handleResponseError(response: [Swift.String : Swift.AnyObject], statusCode: Swift.Int) throws
+  public func handlePinResponseError(response: [Swift.String : Swift.AnyObject], statusCode: Swift.Int) throws
+  @objc deinit
+}
+@objc(EMLShowPinError) public class EMLShowPinError : ObjectiveC.NSObject, Swift.Error, Swift.Decodable {
+  @objc final public let error: EMLiOSSDK.EMLErrorModel
+  @objc final public let refreshAuth: Swift.Bool
+  public init(error: EMLiOSSDK.EMLErrorModel, refreshAuth: Swift.Bool = false)
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLClientEntity) public protocol EMLClientEntity {
+  @objc func getDateOfBirth() -> Swift.String?
+  @objc func getEmailAddress() -> Swift.String?
+  @objc func getFirstName() -> Swift.String?
+  @objc func getLastName() -> Swift.String?
+  @objc func getMobileNumber() -> Swift.String?
+  @objc func getPhoneNumber() -> Swift.String?
+  @objc func getTitle() -> Swift.String?
+  @objc func getMiddleName() -> Swift.String?
+  @objc func getSex() -> Swift.String?
+  @objc func getDriversLicenceNumber() -> Swift.String?
+  @objc func getAddress() -> EMLiOSSDK.EMLAddressEntity?
+  @objc func getAlternateAddress() -> EMLiOSSDK.EMLAddressEntity?
+  @objc func getPassport() -> EMLiOSSDK.EMLPassportModel?
+}
+@objc(EMLAccountDetailsModel) public class EMLAccountDetailsModel : ObjectiveC.NSObject, EMLiOSSDK.EMLAccountDetailsEntity {
+  @objc public init(account: EMLiOSSDK.EMLAccountModel, client: EMLiOSSDK.EMLClientModel?)
+  @objc public func getAccount() -> EMLiOSSDK.EMLAccountEntity
+  public func getClient() -> EMLiOSSDK.EMLClientEntity?
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLLinkModel) public class EMLLinkModel : ObjectiveC.NSObject, EMLiOSSDK.EMLLinkEntity {
+  public var label: Swift.String
+  public var destination: Swift.String
+  public var type: Swift.String
+  @objc public init(label: Swift.String, destination: Swift.String, type: Swift.String)
+  @objc public init(dictionary: [Swift.String : Swift.String])
+  @objc public func getLabel() -> Swift.String
+  @objc public func getDestination() -> Swift.String
+  @objc public func getType() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLProcessor) public enum EMLProcessor : Swift.Int, Swift.Codable, Swift.Equatable {
+  case au
+  case us
+  public var stringValue: Swift.String {
+    get
+  }
+  public init?(stringValue: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLClientModel) public class EMLClientModel : ObjectiveC.NSObject, EMLiOSSDK.EMLClientEntity, Swift.Decodable {
+  @objc public init(dictionary: [Swift.String : Swift.AnyObject])
+  @objc public func getDateOfBirth() -> Swift.String?
+  @objc public func getEmailAddress() -> Swift.String?
+  @objc public func getFirstName() -> Swift.String?
+  @objc public func getLastName() -> Swift.String?
+  @objc public func getMobileNumber() -> Swift.String?
+  @objc public func getPhoneNumber() -> Swift.String?
+  @objc public func getTitle() -> Swift.String?
+  @objc public func getMiddleName() -> Swift.String?
+  @objc public func getSex() -> Swift.String?
+  @objc public func getDriversLicenceNumber() -> Swift.String?
+  @objc public func getAddress() -> EMLiOSSDK.EMLAddressEntity?
+  @objc public func getAlternateAddress() -> EMLiOSSDK.EMLAddressEntity?
+  @objc public func getPassport() -> EMLiOSSDK.EMLPassportModel?
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@_hasMissingDesignatedInitializers @objc(EMLFreeTextModel) public class EMLFreeTextModel : ObjectiveC.NSObject, EMLiOSSDK.EMLFreeTextEntity, Swift.Decodable {
+  @objc public func getText1() -> Swift.String?
+  @objc public func getText2() -> Swift.String?
+  @objc public func getText3() -> Swift.String?
+  @objc public func getText4() -> Swift.String?
+  @objc public func getText5() -> Swift.String?
+  @objc public func getText6() -> Swift.String?
+  @objc public func getText7() -> Swift.String?
+  @objc public func getText8() -> Swift.String?
+  @objc public func getInt1() -> Swift.Int
+  @objc public func getInt2() -> Swift.Int
+  @objc public func getDec1() -> Swift.Double
+  @objc public func getDec2() -> Swift.Double
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLFreeTextEntity) public protocol EMLFreeTextEntity {
+  @objc func getText1() -> Swift.String?
+  @objc func getText2() -> Swift.String?
+  @objc func getText3() -> Swift.String?
+  @objc func getText4() -> Swift.String?
+  @objc func getText5() -> Swift.String?
+  @objc func getText6() -> Swift.String?
+  @objc func getText7() -> Swift.String?
+  @objc func getText8() -> Swift.String?
+  @objc func getInt1() -> Swift.Int
+  @objc func getInt2() -> Swift.Int
+  @objc func getDec1() -> Swift.Double
+  @objc func getDec2() -> Swift.Double
+}
+@objc(EMLTextModel) public class EMLTextModel : ObjectiveC.NSObject, EMLiOSSDK.EMLTextEntity {
+  final public let title: Swift.String
+  final public let desc: Swift.String
+  @objc public init(dictionary: [Swift.String : Swift.String])
+  @objc public init(title: Swift.String, description: Swift.String)
+  @objc public func getTitle() -> Swift.String
+  @objc public func getDesc() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLAddressModel) public class EMLAddressModel : ObjectiveC.NSObject, EMLiOSSDK.EMLAddressEntity, Swift.Decodable {
+  @objc public init(dictionary: [Swift.String : Swift.String])
+  @objc public func getBuilding() -> Swift.String
+  @objc public func getLine1() -> Swift.String
+  @objc public func getLine2() -> Swift.String
+  @objc public func getLine3() -> Swift.String
+  @objc public func getSuburb() -> Swift.String
+  @objc public func getCity() -> Swift.String
+  @objc public func getPostCode() -> Swift.String
+  @objc public func getState() -> Swift.String
+  @objc public func getCountry() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+}
+@objc(EMLAccountTokensEntity) public protocol EMLAccountTokensEntity {
+  @objc func getPanUniqueReference() -> Swift.String
+  @objc func getWallet() -> Swift.String
+  @objc func getStatus() -> EMLiOSSDK.EMLTokenStatus
+}
+@objc(EMLTokenStatus) public enum EMLTokenStatus : Swift.Int {
+  case active
+  case unmapped
+  case suspended
+  case unknown
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension Date {
+  public init?(fromString string: Swift.String, format: EMLiOSSDK.EMLDateFormatType, timeZone: EMLiOSSDK.EMLTimeZoneType = .local, locale: Foundation.Locale = Foundation.Locale.current)
+  public func toString(style: EMLiOSSDK.EMLDateStyleType = .short) -> Swift.String
+  public func toString(format: EMLiOSSDK.EMLDateFormatType, timeZone: EMLiOSSDK.EMLTimeZoneType = .local, locale: Foundation.Locale = Locale.current) -> Swift.String
+  public func toString(dateStyle: Foundation.DateFormatter.Style, timeStyle: Foundation.DateFormatter.Style, isRelative: Swift.Bool = false, timeZone: Foundation.TimeZone = Foundation.NSTimeZone.local, locale: Foundation.Locale = Locale.current) -> Swift.String
+  public func toStringWithRelativeTime(strings: [EMLiOSSDK.EMLRelativeTimeStringType : Swift.String]? = nil) -> Swift.String
+  public func compare(_ comparison: EMLiOSSDK.EMLDateComparisonType) -> Swift.Bool
+  public func adjust(_ component: EMLiOSSDK.EMLDateComponentType, offset: Swift.Int) -> Foundation.Date
+  public func adjust(hour: Swift.Int?, minute: Swift.Int?, second: Swift.Int?, day: Swift.Int? = nil, month: Swift.Int? = nil) -> Foundation.Date
+  public func dateFor(_ type: EMLiOSSDK.EMLDateForType, calendar: Foundation.Calendar = Calendar.current) -> Foundation.Date
+  public func since(_ date: Foundation.Date, in component: EMLiOSSDK.EMLDateComponentType) -> Swift.Int64
+  public func component(_ component: EMLiOSSDK.EMLDateComponentType) -> Swift.Int?
+  public func numberOfDaysInMonth() -> Swift.Int
+  public func firstDayOfWeek() -> Swift.Int
+  public func lastDayOfWeek() -> Swift.Int
+}
+public enum EMLDateFormatType {
+  case isoYear
+  case isoYearMonth
+  case isoDate
+  case isoDateTime
+  case isoDateTimeSec
+  case isoDateTimeMilliSec
+  case dotNet
+  case rss
+  case altRSS
+  case httpHeader
+  case standard
+  case custom(Swift.String)
+}
+public enum EMLTimeZoneType {
+  case local, utc
+  public static func == (a: EMLiOSSDK.EMLTimeZoneType, b: EMLiOSSDK.EMLTimeZoneType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum EMLRelativeTimeStringType {
+  case nowPast, nowFuture, secondsPast, secondsFuture, oneMinutePast, oneMinuteFuture, minutesPast, minutesFuture, oneHourPast, oneHourFuture, hoursPast, hoursFuture, oneDayPast, oneDayFuture, daysPast, daysFuture, oneWeekPast, oneWeekFuture, weeksPast, weeksFuture, oneMonthPast, oneMonthFuture, monthsPast, monthsFuture, oneYearPast, oneYearFuture, yearsPast, yearsFuture
+  public static func == (a: EMLiOSSDK.EMLRelativeTimeStringType, b: EMLiOSSDK.EMLRelativeTimeStringType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum EMLDateComparisonType {
+  case isToday
+  case isTomorrow
+  case isYesterday
+  case isSameDay(as: Foundation.Date)
+  case isThisWeek
+  case isNextWeek
+  case isLastWeek
+  case isSameWeek(as: Foundation.Date)
+  case isThisMonth
+  case isNextMonth
+  case isLastMonth
+  case isSameMonth(as: Foundation.Date)
+  case isThisYear
+  case isNextYear
+  case isLastYear
+  case isSameYear(as: Foundation.Date)
+  case isInTheFuture
+  case isInThePast
+  case isEarlier(than: Foundation.Date)
+  case isLater(than: Foundation.Date)
+  case isWeekday
+  case isWeekend
+}
+public enum EMLDateComponentType {
+  case second, minute, hour, day, weekday, nthWeekday, week, month, year
+  public static func == (a: EMLiOSSDK.EMLDateComponentType, b: EMLiOSSDK.EMLDateComponentType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum EMLDateForType {
+  case startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, tomorrow, yesterday, nearestMinute(minute: Swift.Int), nearestHour(hour: Swift.Int)
+}
+public enum EMLDateStyleType {
+  case short
+  case medium
+  case long
+  case full
+  case ordinalDay
+  case weekday
+  case shortWeekday
+  case veryShortWeekday
+  case month
+  case shortMonth
+  case veryShortMonth
+  public static func == (a: EMLiOSSDK.EMLDateStyleType, b: EMLiOSSDK.EMLDateStyleType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@objc(EMLAccountEntity) public protocol EMLAccountEntity : EMLiOSSDK.EMLAccountStatusEntity {
+  @objc func getCardNumber() -> Swift.String
+  @objc func isCompliant() -> Swift.Bool
+  @objc func getNameOnCard() -> Swift.String?
+  @objc func getDisplayName() -> Swift.String?
+  @objc func getAccountExpirationDate() -> Swift.String
+  @objc func getPlasticExpirationDate() -> Swift.String
+  @objc func getFreeText() -> EMLiOSSDK.EMLFreeTextEntity?
+}
+@objc(EMLSDKEnvironment) public enum EMLSDKEnvironment : Swift.Int {
+  case beta
+  case preProd
+  case prod
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers @objc(EMLSDK) public class EMLSDK : ObjectiveC.NSObject, EMLiOSSDK.EMLStoreProtocol {
+  @objc public static var shared: EMLiOSSDK.EMLSDK
+  @objc public var isTesting: Swift.Bool
+  @objc public func getSDKEnvironment() -> EMLiOSSDK.EMLSDKEnvironment
+  @objc public func configure(subscriptionKey: Swift.String, environment: EMLiOSSDK.EMLSDKEnvironment = .prod, debug: Swift.Bool = false, applicationKeyId: Swift.String? = nil, applicationKeySecret: Swift.String? = nil)
+  @objc public func getCurrentUsername() -> Swift.String?
+  @objc public func isLoggedIn() -> Swift.Bool
+  @objc public func getCurrentCards() -> [EMLiOSSDK.EMLCardModel]
+  @objc public func getCurrentOffers() -> [EMLiOSSDK.EMLOffer]
+  @objc public func setAuthenticationToken(token: Swift.String, username: Swift.String?, onComplete: @escaping () -> Swift.Void)
+  @objc public func login(request: EMLiOSSDK.EMLLoginRequest, onComplete: @escaping (EMLiOSSDK.EMLLoginResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func logout(onComplete: (() -> Swift.Void)?)
+  @objc public func getAccountSummary(request: EMLiOSSDK.EMLAccountSummaryRequest, onComplete: @escaping (EMLiOSSDK.EMLAccountStatusModel) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func getAccountDetails(request: EMLiOSSDK.EMLAccountDetailsRequest, onComplete: @escaping (EMLiOSSDK.EMLAccountDetailsModel) -> Swift.Void, onError: @escaping (Swift.Error, Swift.String) -> Swift.Void)
+  @objc public func updateAccountDetails(card: EMLiOSSDK.EMLCardModel, accountUpdateDetails: EMLiOSSDK.EMLAccountUpdate, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func activate(request: EMLiOSSDK.EMLCardActivationRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func deactivate(request: EMLiOSSDK.EMLDeactivateCardRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func activatePlastic(request: EMLiOSSDK.EMLPlasticActivationRequest, onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func getConfig(onComplete: @escaping (EMLiOSSDK.EMLConfigEntity) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func getTransactionHistory(offset: Swift.Int, limit: Swift.Int, days: Swift.Int = 7, includeDiscount: Swift.Bool = false, onComplete: @escaping (EMLiOSSDK.EMLTransactionsResponseModel) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func getTransactionHistory(request: EMLiOSSDK.EMLTransactionsRequestModel, onComplete: @escaping (EMLiOSSDK.EMLTransactionsResponseModel) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func showUpdatePin(request: EMLiOSSDK.ManagePinDisplayRequest, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func showPin(card: EMLiOSSDK.EMLCardModel, displayOptions: EMLiOSSDK.EMLCardDisplayEntity, presentingViewController: UIKit.UIViewController, onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func getWalletStatus(request: EMLiOSSDK.EMLGetWalletStatusRequest, onComplete: @escaping (EMLiOSSDK.EMLWalletStatus) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func addCardToWallet(request: EMLiOSSDK.EMLAddToWalletRequest, onComplete: @escaping (EMLiOSSDK.EMLWalletStatus) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func acceptTerms(onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func acceptExtraTerms(onComplete: @escaping () -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func isNewTerms(onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func redeemGiftCard(request: EMLiOSSDK.EMLRedeemGiftCardRequest, onComplete: @escaping (EMLiOSSDK.EMLRedeemGiftCardResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func checkClaim(request: EMLiOSSDK.EMLRedeemGiftCardRequest, onComplete: @escaping (EMLiOSSDK.EMLOffer) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func addPlastic(phone: Swift.String, searchParam: Swift.String, securityCode: Swift.String?, processor: EMLiOSSDK.EMLProcessor, password: Swift.String?, additionalUserInfo: EMLiOSSDK.EMLAdditionalUserInfo?, onComplete: @escaping (EMLiOSSDK.EMLRedeemGiftCardResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func redeemOffer(id: Swift.String, onComplete: @escaping (EMLiOSSDK.EMLCurrentLogin) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func showCardNotPresentDetails(request: EMLiOSSDK.EMLShowCardNotPresentDetailsRequest)
+  @objc public func getCardNotPresentDetails(card: EMLiOSSDK.EMLCardModel, onComplete: @escaping (EMLiOSSDK.EMLCardNotPresentDetails) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func resetPassword(request: EMLiOSSDK.EMLPasswordResetRequest, onComplete: @escaping (EMLiOSSDK.EMLPasswordResetResponse) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc public func isUpdateRequired(onComplete: @escaping (Swift.Bool) -> Swift.Void, onError: @escaping (Swift.Error) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLDisplayModel) public class EMLDisplayModel : ObjectiveC.NSObject {
+  @objc final public let accentColor: UIKit.UIColor
+  @objc public init(accentColor: UIKit.UIColor)
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension Array where Element == Swift.UInt8 {
+  public func byteArrayToHexString() -> Swift.String
+}
+@objc(EMLCardActivationRequest) public class EMLCardActivationRequest : ObjectiveC.NSObject {
+  @objc final public let activationCode: Swift.String
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel, activationCode: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLCardActivationResponse) public class EMLCardActivationResponse : ObjectiveC.NSObject {
+  @objc final public let success: Swift.Bool
+  @objc final public let errorMessage: Swift.String?
+  @objc public init(success: Swift.Bool, errorMessage: Swift.String?)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLPlasticActivationRequest) public class EMLPlasticActivationRequest : ObjectiveC.NSObject {
+  @objc final public let activationCode: Swift.String
+  @objc final public let card: EMLiOSSDK.EMLCardModel
+  @objc public init(card: EMLiOSSDK.EMLCardModel, activationCode: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLLoginRequest) public class EMLLoginRequest : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let username: Swift.String
+  @objc final public let password: Swift.String
+  @objc final public let keepMeLoggedIn: Swift.Bool
+  @objc public init(username: Swift.String, password: Swift.String, keepLoggedIn: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(EMLLoginResponse) public class EMLLoginResponse : ObjectiveC.NSObject {
+  @objc final public let cards: [EMLiOSSDK.EMLCardModel]
+  @objc public var offers: [EMLiOSSDK.EMLOffer]
+  @objc final public let errorMessage: Swift.String?
+  @objc final public let termsConfirmed: Swift.Bool
+  @objc public init(cards: [EMLiOSSDK.EMLCardModel], errorMessage: Swift.String?, offers: [EMLiOSSDK.EMLOffer], termsConfirmed: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(EMLCurrentLogin) public class EMLCurrentLogin : ObjectiveC.NSObject {
+  @objc final public let cards: [EMLiOSSDK.EMLCardModel]
+  @objc final public let offers: [EMLiOSSDK.EMLOffer]
+  @objc final public let currentId: Swift.String?
+  @objc final public let termsConfirmed: Swift.Bool
+  @objc public init(cards: [EMLiOSSDK.EMLCardModel], offers: [EMLiOSSDK.EMLOffer], currentId: Swift.String?, termsConfirmed: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum EMLSupport {
+  public enum FetchFaqs {
+    public class Request {
+      public init()
+      @objc deinit
+    }
+    public class Response {
+      public var faqs: [EMLiOSSDK.EMLTextModel]
+      public init(faqs: [EMLiOSSDK.EMLTextModel])
+      @objc deinit
+    }
+    public class ViewModel {
+      public var faqs: [EMLiOSSDK.EMLTextModel]
+      public init(faqs: [EMLiOSSDK.EMLTextModel])
+      @objc deinit
+    }
+  }
+  public enum FetchLinks {
+    public class Request {
+      public init()
+      @objc deinit
+    }
+    public class Response {
+      public var links: [EMLiOSSDK.EMLLinkModel]
+      public init(links: [EMLiOSSDK.EMLLinkModel])
+      @objc deinit
+    }
+    public class ViewModel {
+      public var links: [EMLiOSSDK.EMLLinkModel]
+      public init(links: [EMLiOSSDK.EMLLinkModel])
+      @objc deinit
+    }
+  }
+}
+@objc(EMLTransactionModel) public class EMLTransactionModel : ObjectiveC.NSObject, EMLiOSSDK.EMLTransactionEntity {
+  @objc final public let id: Swift.String?
+  @objc final public let parentId: Swift.String?
+  @objc final public let typeId: Swift.String?
+  @objc final public let typeDescription: Swift.String?
+  @objc final public let date: Foundation.Date
+  @objc final public let desc: Swift.String
+  @objc final public let baseAmount: EMLiOSSDK.Currency
+  @objc final public let runningBalance: EMLiOSSDK.Currency?
+  @objc final public let feeTotal: EMLiOSSDK.Currency?
+  @objc final public let mccCode: Swift.Int
+  @objc final public let category: Swift.String
+  @objc final public let discountAmount: EMLiOSSDK.Currency?
+  public init(id: Swift.String?, parentId: Swift.String?, typeId: Swift.String?, typeDescription: Swift.String?, date: Foundation.Date, description: Swift.String, baseAmount: EMLiOSSDK.Currency, runningBalance: EMLiOSSDK.Currency?, feeTotal: EMLiOSSDK.Currency?, mccCode: Swift.Int, category: Swift.String, discount: EMLiOSSDK.Currency?)
+  public init(dictionary: [Swift.String : Swift.AnyObject]) throws
+  @objc public func getId() -> Swift.String?
+  @objc public func getParentId() -> Swift.String?
+  @objc public func getTypeId() -> Swift.String?
+  @objc public func getTypeDescription() -> Swift.String?
+  @objc public func getDate() -> Foundation.Date
+  @objc public func getDesc() -> Swift.String
+  @objc public func getBaseAmount() -> EMLiOSSDK.Currency
+  @objc public func getRunningBalance() -> EMLiOSSDK.Currency?
+  @objc public func getFeeTotal() -> EMLiOSSDK.Currency?
+  @objc public func getMccCode() -> Swift.Int
+  @objc public func getCategory() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension EMLiOSSDK.EMLAccountStatus : Swift.Equatable {}
+extension EMLiOSSDK.EMLAccountStatus : Swift.Hashable {}
+extension EMLiOSSDK.EMLAccountStatus : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLListTransactionsState : Swift.Equatable {}
+extension EMLiOSSDK.EMLListTransactionsState : Swift.Hashable {}
+extension EMLiOSSDK.EMLListTransactionsState : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLTransactionCategories : Swift.Equatable {}
+extension EMLiOSSDK.EMLTransactionCategories : Swift.Hashable {}
+extension EMLiOSSDK.EMLTransactionCategories : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLWalletStatus : Swift.Equatable {}
+extension EMLiOSSDK.EMLWalletStatus : Swift.Hashable {}
+extension EMLiOSSDK.EMLWalletStatus : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLDeactivationReasonCode : Swift.Equatable {}
+extension EMLiOSSDK.EMLDeactivationReasonCode : Swift.Hashable {}
+extension EMLiOSSDK.EMLDeactivationReasonCode : Swift.RawRepresentable {}
+extension EMLiOSSDK.AddressDisplayType : Swift.Equatable {}
+extension EMLiOSSDK.AddressDisplayType : Swift.Hashable {}
+extension EMLiOSSDK.AddressDisplayType : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLPinAccess : Swift.Equatable {}
+extension EMLiOSSDK.EMLPinAccess : Swift.Hashable {}
+extension EMLiOSSDK.EMLPinAccess : Swift.RawRepresentable {}
+extension EMLiOSSDK.KeychainItemAccessibility : Swift.Equatable {}
+extension EMLiOSSDK.KeychainItemAccessibility : Swift.Hashable {}
+extension EMLiOSSDK.EMLNetworkError : Swift.Equatable {}
+extension EMLiOSSDK.EMLNetworkError : Swift.Hashable {}
+extension EMLiOSSDK.EMLNetworkError : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLProcessor : Swift.Hashable {}
+extension EMLiOSSDK.EMLProcessor : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLTokenStatus : Swift.Equatable {}
+extension EMLiOSSDK.EMLTokenStatus : Swift.Hashable {}
+extension EMLiOSSDK.EMLTokenStatus : Swift.RawRepresentable {}
+extension EMLiOSSDK.EMLTimeZoneType : Swift.Equatable {}
+extension EMLiOSSDK.EMLTimeZoneType : Swift.Hashable {}
+extension EMLiOSSDK.EMLRelativeTimeStringType : Swift.Equatable {}
+extension EMLiOSSDK.EMLRelativeTimeStringType : Swift.Hashable {}
+extension EMLiOSSDK.EMLDateComponentType : Swift.Equatable {}
+extension EMLiOSSDK.EMLDateComponentType : Swift.Hashable {}
+extension EMLiOSSDK.EMLDateStyleType : Swift.Equatable {}
+extension EMLiOSSDK.EMLDateStyleType : Swift.Hashable {}
+extension EMLiOSSDK.EMLSDKEnvironment : Swift.Equatable {}
+extension EMLiOSSDK.EMLSDKEnvironment : Swift.Hashable {}
+extension EMLiOSSDK.EMLSDKEnvironment : Swift.RawRepresentable {}

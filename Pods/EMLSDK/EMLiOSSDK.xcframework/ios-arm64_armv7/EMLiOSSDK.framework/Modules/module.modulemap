@@ -1,0 +1,11 @@
+framework module EMLiOSSDK {
+  umbrella header "EMLiOSSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module EMLiOSSDK.Swift {
+    header "EMLiOSSDK-Swift.h"
+    requires objc
+}
